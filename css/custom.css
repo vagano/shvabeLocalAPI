@@ -1,0 +1,132 @@
+body {
+    padding: 0;
+    margin: 0;
+    background: black;
+}
+
+.widget{
+    position: absolute;
+    width: 384px;
+    height: 384px;
+    top: 0;
+    left: 0;
+}
+
+#temp_widget {
+    background: #000000 url("../assets/background.png");
+    text-align: center;
+
+}
+
+#temp_widget span {
+    color: #ffffff;
+    font-family: 'PT Sans', sans-serif;
+    font-size: 8em;
+    display: block;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#clock_widget {
+    background: #000000 url("../assets/background.png");
+    text-align: center;
+
+}
+
+#clock_widget span {
+    color: #ffffff;
+    font-family: 'PT Sans', sans-serif;
+    font-size: 8em;
+    display: block;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#analog_clock_widget {
+    background: #000000 url("../assets/analog_clock_bgr.png");
+    text-align: center;
+
+}
+
+.minutes-container, .hours-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.hours {
+    background: #ff6600;
+    height: 15%;
+    left: 48.75%;
+    position: absolute;
+    top: 35%;
+    transform-origin: 50% 100%;
+    width: 3%;
+}
+
+.minutes {
+    background: #ff6600;
+    height: 25%;
+    left: 49%;
+    position: absolute;
+    top: 25%;
+    transform-origin: 50% 100%;
+    width: 2%;
+}
+
+.seconds {
+    background: #000;
+    height: 45%;
+    left: 49.5%;
+    position: absolute;
+    top: 14%;
+    transform-origin: 50% 80%;
+    width: 1%;
+    z-index: 8;
+    visibility: hidden;
+}
+
+@keyframes rotate {
+    100% {
+        transform: rotateZ(360deg);
+    }
+}
+
+.hours-container {
+    animation: rotate 43200s infinite linear;
+}
+
+.minutes-container {
+    transition: transform 0.3s cubic-bezier(.4, 2.08, .55, .44);
+}
+
+.seconds-container {
+    transition: transform 0.2s cubic-bezier(.4, 2.08, .55, .44);
+}
+
+#video_container
+{
+    display: none;
+}
+
+#video_container video
+{
+    width: 384px;
+    height: 384px;
+}
+
+#image_container
+{
+    display: none;
+}
+
+#image_container img
+{
+    width: 384px;
+    height: 384px;
+}
+

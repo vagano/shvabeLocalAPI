@@ -1,0 +1,32 @@
+{
+  "app": {
+    "access_tokens": {
+      "dfcb6ba8-95fd-4941-83c7-80671c5f728c": "stella auth token"
+    },
+    "tmp_files_path": "",
+    "ffmpeg_executable": "C:\\Users\\vagan\\Anaconda3\\pkgs\\ffmpeg-3.2.4-3\\Library\\bin\\ffmpeg.exe",
+    "service_log_level": "DEBUG",
+    "database_path": "C:\\Users\\vagan\\PycharmProjects\\shvabeLocalApi\\",
+    "database_name": "files.sqlite",
+    "log_path": "C:\\Users\\vagan\\PycharmProjects\\shvabeLocalApi\\",
+    "raw_path": "C:\\Users\\vagan\\PycharmProjects\\shvabeLocalApi\\raw\\"
+  },
+  "weather": {
+    "file_path": "",
+    "file_name": "weather.json"
+  },
+  "photo_crop": {
+      "path": "C:\\Users\\vagan\\PycharmProjects\\shvabeLocalApi\\photo\\",
+      "dimensions": {
+        "width": 384,
+        "height": 384
+      }
+  },
+  "video_crop": {
+      "path": "C:\\Users\\vagan\\PycharmProjects\\shvabeLocalApi\\video\\",
+      "dimensions": {
+        "width": 384,
+        "height": 384
+      }
+  }
+}

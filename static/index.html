@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Page to run by default to present info on screen</title>
+    <link rel="stylesheet" href="css/custom.css"/>
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet"/>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="js/jquery.shvabe.weather.js"></script>
+    <script src="js/jquery.shvabe.clock.js"></script>
+    <script src="js/jquery.shvabe.image.js"></script>
+    <script src="js/jquery.cycle.all.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#temp_widget").weather({apiUrl: "/api/get_current_temp"});
+            $("#analog_clock_widget").analogClock();
+            $("#clock_widget").digitalClock();
+            $("#en_logo").imageWidget({imageSrc: "assets/en_logo.png"});
+            $("#ru_logo").imageWidget({imageSrc: "assets/ru_logo.png"});
+            $("#shield").imageWidget({imageSrc: "assets/shield.png"});
+
+            $(function () {
+                $('#cycle').cycle({
+                    fx: 'turnDown',
+                    speed: 'slow',
+                    slideExpr: 'div.widget',
+                    timeoutFn: calculateTimeout,
+                    before: onBefore
+                });
+            });
+
+            function calculateTimeout(currElement, nextElement, opts, isForward) {
+                return $(currElement).attr('lifetime') * 1000;
+            }
+
+            function onBefore(curr, next, opts) {
+
+                $.get({
+                    url: "/api/get_item_to_show",
+                    dataType: "json",
+                    timeout: 1000,
+                    success: function (data) {
+                        if (data.filetype == 'video') {
+                            $('#image_container').hide()
+                            $('#video_to_be_shown').attr('src', '/video/' + data.filename);
+                            $('#video_to_be_shown').on('ended', function () {
+                                $('#video_container').slideToggle('slow');
+                                $('#cycle').cycle('resume');
+                                $.get({
+                                    url: "/api/was_shown/" + data.filename
+                                });
+                            });
+                            $('#cycle').cycle('pause');
+                            $('#video_container').slideToggle('slow');
+                            $('#video_to_be_shown').get(0).play();
+                        }
+                        if (data.filetype == 'photo') {
+                            $('#video_container').hide();
+                            $('#image_to_be_shown').attr('src', '/photo/' + data.filename);
+                            $('#cycle').cycle('pause');
+
+                            $('#image_container').slideToggle('slow').delay(10 * 1000).slideToggle({
+                                duration: 'slow',
+                                done: function () {
+                                    $('#cycle').cycle('resume');
+                                    $.get({
+                                        url: "/api/was_shown/" + data.filename
+                                    });
+                                }
+                            });
+
+
+                        }
+                    },
+                    error: function () {
+                        $('#image_container').hide();
+                        $('#video_container').hide();
+                    }
+                });
+
+            }
+        })
+    </script>
+</head>
+<body>
+<div id="image_container" class="">
+    <img id="image_to_be_shown"/>
+</div>
+<div id="video_container" class="">
+    <video id="video_to_be_shown"></video>
+</div>
+<div id="cycle">
+    <div id="temp_widget" class="widget" lifetime="30"></div>
+    <div id="en_logo" class="widget" lifetime="10"></div>
+    <div id="clock_widget" class="widget" lifetime="30"></div>
+    <div id="ru_logo" class="widget" lifetime="10"></div>
+    <div id="analog_clock_widget" class="widget" lifetime="30"></div>
+    <div id="shield" class="widget" lifetime="10"></div>
+</div>
+</body>
+</html>

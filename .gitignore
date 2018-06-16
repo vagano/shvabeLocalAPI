@@ -1,0 +1,11 @@
+*.webm
+**/.idea
+*.log
+/photo
+/raw
+/video
+/venv
+*.so
+/weather.json
+*.zip
+*.sqlite
