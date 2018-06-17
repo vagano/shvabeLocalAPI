@@ -45,13 +45,16 @@
                             $('#video_to_be_shown').attr('src', '/static/video/' + data.filename);
                             $('#video_to_be_shown').on('ended', function () {
                                 $('#video_container').slideToggle('slow');
+                                $('#cycle').show()
                                 $('#cycle').cycle('resume');
                                 $.get({
                                     url: "/api/was_shown/" + data.filename
                                 });
                             });
                             $('#cycle').cycle('pause');
+                            $('#cycle').hide()
                             $('#video_container').slideToggle('slow');
+
                             $('#video_to_be_shown').get(0).play();
                         }
                         if (data.filetype == 'photo') {
