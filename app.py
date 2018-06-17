@@ -93,12 +93,12 @@ def save_data():
         base64data = request.json['data'].split(',')[1]
         if request.json['datatype'] == 'photo':
             try:
-                tmp_filename = config["app"]["tmp_files_path"] + "tmp_" + str(uuid.uuid4()) + '.png'
+                tmp_filename = os.path.join(config["app"]["tmp_files_path"], "tmp_" + str(uuid.uuid4()) + '.png')
                 with open(tmp_filename, 'wb') as f_img:
                     f_img.write(base64.b64decode(base64data))
 
                 new_filename = "photo_" + str(uuid.uuid4()) + '.png'
-                new_filepath = config["photo_crop"]["path"] + new_filename
+                new_filepath = os.path.join(config["photo_crop"]["path"], new_filename)
 
                 result = run(args=[
                     config["app"]['ffmpeg_executable'],
@@ -123,12 +123,12 @@ def save_data():
                 logging.error('problem in image processing: ' + str(e))
         else:
             try:
-                tmp_filename = config["app"]["tmp_files_path"] + "tmp_"+str(uuid.uuid4()) + '.webm'
+                tmp_filename = os.path.join(config["app"]["tmp_files_path"], "tmp_"+str(uuid.uuid4()) + '.webm')
                 with open(tmp_filename, 'wb') as f_vid:
                     f_vid.write(base64.b64decode(base64data))
 
                 new_filename = "video_"+str(uuid.uuid4()) + '.webm'
-                new_filepath = config["video_crop"]["path"] + new_filename
+                new_filepath = os.path.join(config["video_crop"]["path"], new_filename)
 
                 result = run(args=[
                         config["app"]['ffmpeg_executable'],
