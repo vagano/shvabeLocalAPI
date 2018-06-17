@@ -23,8 +23,9 @@ app = Flask(__name__, static_url_path='/')
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 auth = HTTPTokenAuth(scheme='JWT')
 
-path_to_current_file = os.path.dirname(os.path.abspath(__file__)) + "\\"
-cfg_file = open(path_to_current_file + "config.json", 'r')
+path_to_current_file = os.path.dirname(os.path.abspath(__file__))
+cfg_file = open(os.path.join(path_to_current_file,"config.json"), 'r')
+
 config = json.load(cfg_file)
 
 level = logging.getLevelName(config['app']['service_log_level'])
@@ -40,7 +41,7 @@ logging.info("Configurated")
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        db = g._database = sqlite3.connect(config['app']['database_path'] + config['app']['database_name'])
+        db = g._database = sqlite3.connect(os.path.join(config['app']['database_path'],config['app']['database_name']))
         cursor = db.cursor();
         cursor.execute('''CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY AUTOINCREMENT, date DATETIME, 
                                filetype TEXT, filename TEXT, was_shown INTEGER)''')
