@@ -84,17 +84,6 @@ def root():
     else:
         return app.send_static_file('index.html')
 
-
-@app.route('/js/<path:path>')
-def send_js(path):
-    return send_from_directory('js', path)
-
-
-@app.route('/css/<path:path>')
-def send_css(path):
-    return send_from_directory('css', path)
-
-
 @app.route('/photo/<path:path>')
 def send_photo(path):
     return send_from_directory('photo', path)
@@ -103,11 +92,6 @@ def send_photo(path):
 @app.route('/video/<path:path>')
 def send_video(path):
     return send_from_directory('video', path)
-
-
-@app.route('/assets/<path:path>')
-def send_assets(path):
-    return send_from_directory('assets', path)
 
 
 @app.route('/api/get_current_temp', methods=['GET'])
