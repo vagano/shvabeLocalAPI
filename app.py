@@ -123,39 +123,46 @@ def save_data():
                 logging.error('problem in image processing: ' + str(e))
         else:
             try:
-                tmp_filename = os.path.join(config["app"]["tmp_files_path"], "tmp_"+str(uuid.uuid4()) + '.webm')
-                with open(tmp_filename, 'wb') as f_vid:
-                    f_vid.write(base64.b64decode(base64data))
 
-                new_filename = "video_"+str(uuid.uuid4()) + '.webm'
+                new_filename = "video_" + str(uuid.uuid4()) + '.webm'
                 new_filepath = os.path.join(config["video_crop"]["path"], new_filename)
 
-                result = run(args=[
-                        config["app"]['ffmpeg_executable'],
-                        "-noautorotate",
-                        "-i",
-                        tmp_filename,
-                        "-vf",
-                        "scale=-1:{1},crop={0}:{1}:(in_w-{0})/2:0".format(config["video_crop"]["dimensions"]["width"],config["video_crop"]["dimensions"]["height"]),
-                        "-strict",
-                        "-2",
-                        "-preset",
-                        "ultrafast",
-                        "-metadata:s:v",
-                        "rotate=0",
-                        "-fflags",
-                        "+genpts",
-                        new_filepath],
-                        stdout=PIPE,
-                        stderr=PIPE,
-                        universal_newlines=True)
-                logging.info("{0} {1} {2}".format(result.returncode,result.stdout, result.stderr))
+                with open(new_filepath, 'wb') as f_vid:
+                    f_vid.write(base64.b64decode(base64data))
 
-                try:
-                    os.remove(tmp_filename)
-                except Exception as e:
-                    logging.error('Error in removing tmp video file:' + str(e))
-                    logging.info('image file ' + new_filename + ' processed successfully')
+                # tmp_filename = os.path.join(config["app"]["tmp_files_path"], "tmp_"+str(uuid.uuid4()) + '.webm')
+                # with open(tmp_filename, 'wb') as f_vid:
+                #     f_vid.write(base64.b64decode(base64data))
+
+                # new_filename = "video_"+str(uuid.uuid4()) + '.webm'
+                # new_filepath = os.path.join(config["video_crop"]["path"], new_filename)
+                #
+                # result = run(args=[
+                #         config["app"]['ffmpeg_executable'],
+                #         "-noautorotate",
+                #         "-i",
+                #         tmp_filename,
+                #         "-vf",
+                #         "\"scale=-1:{1},crop={0}:{1}:(in_w-{0})/2:0\"".format(config["video_crop"]["dimensions"]["width"],config["video_crop"]["dimensions"]["height"]),
+                #         "-strict",
+                #         "-2",
+                #         "-preset",
+                #         "ultrafast",
+                #         "-metadata:s:v",
+                #         "rotate=0",
+                #         "-fflags",
+                #         "+genpts",
+                #         new_filepath],
+                #         stdout=PIPE,
+                #         stderr=PIPE,
+                #         universal_newlines=True)
+                # logging.info("{0} {1} {2}".format(result.returncode,result.stdout, result.stderr))
+                #
+                # try:
+                #     os.remove(tmp_filename)
+                # except Exception as e:
+                #     logging.error('Error in removing tmp video file:' + str(e))
+                logging.info('video file ' + new_filename + ' processed successfully')
             except Exception as e:
                 logging.error('problem in video processing: ' + str(e))
 

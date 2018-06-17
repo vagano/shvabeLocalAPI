@@ -110,7 +110,17 @@ body {
 
 #video_container
 {
-    display: none;
+    /*display: none;*/
+    width: 384px;
+    height: 384px;
+    overflow: hidden;
+}
+
+video#video_to_be_shown{
+    height: 384px;
+    position: absolute;
+    top:0;
+    left: -(calc((width - 384)/2));
 }
 
 #video_container video
