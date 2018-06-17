@@ -13,13 +13,6 @@ import uuid
 from flask_cors import CORS
 from flask_httpauth import HTTPTokenAuth
 
-import cv2
-import numpy as np
-
-# from moviepy.video.io.VideoFileClip import VideoFileClip
-# from moviepy.video.fx.resize import resize
-# from moviepy.video.fx.crop import crop
-
 import math
 
 import logging
@@ -132,47 +125,48 @@ def get_temp():
 @app.route('/api/save_data', methods=['POST'])
 # @auth.login_required
 def save_data():
-    logging.info("insertion to data")
     try:
         base64data = request.json['data'].split(',')[1]
         if request.json['datatype'] == 'photo':
             try:
-                b64img = base64.b64decode(base64data);
-                npimg = np.fromstring(b64img, dtype=np.uint8);
-                img = cv2.imdecode(npimg, 1)
-                w, h, c = img.shape
+                tmp_filename = config["app"]["tmp_files_path"] + "tmp_" + str(uuid.uuid4()) + '.png'
+                with open(tmp_filename, 'wb') as f_img:
+                    f_img.write(base64.b64decode(base64data))
 
-                q_dim = min(w, h);
-
-                waist_coord = math.ceil((max(w, h) - q_dim) / 2)
-
-                if w == max(w, h):
-                    crop_img = img[0: h, waist_coord:q_dim]
-                else:
-                    crop_img = img[waist_coord:q_dim, 0:w]
-                img_res = cv2.resize(crop_img, (
-                    config["photo_crop"]["dimensions"]["width"],
-                    config["photo_crop"]["dimensions"]["height"]))
-                new_filename = str(uuid.uuid4()) + '.png'
+                new_filename = "photo_" + str(uuid.uuid4()) + '.png'
                 new_filepath = config["photo_crop"]["path"] + new_filename
-                cv2.imwrite(new_filepath, img_res)
 
-                write_file_info(new_filename, request.json['datatype'])
+                result = run(args=[
+                    config["app"]['ffmpeg_executable'],
+                    "-i",
+                    tmp_filename,
+                    "-vf",
+                    "scale=-1:{1},crop={0}:{1}:(in_w-{0})/2:0".format(config["photo_crop"]["dimensions"]["width"],
+                                                                  config["photo_crop"]["dimensions"]["height"]),
+                    new_filepath],
+                    stdout=PIPE,
+                    stderr=PIPE,
+                    universal_newlines=True)
+                logging.info("{0} {1} {2}".format(result.returncode, result.stdout, result.stderr))
+
+                try:
+                    os.remove(tmp_filename)
+                except Exception as e:
+                    logging.error('Error in removing tmp img file:' + str(e))
 
                 logging.info('image file ' + new_filename + ' processed successfully')
             except Exception as e:
                 logging.error('problem in image processing: ' + str(e))
         else:
-            tmp_filename = config["app"]["tmp_files_path"] + "tmp_"+str(uuid.uuid4()) + '.webm'
-            with open(tmp_filename, 'wb') as f_vid:
-                f_vid.write(base64.b64decode(base64data))
+            try:
+                tmp_filename = config["app"]["tmp_files_path"] + "tmp_"+str(uuid.uuid4()) + '.webm'
+                with open(tmp_filename, 'wb') as f_vid:
+                    f_vid.write(base64.b64decode(base64data))
 
-            new_filename = "video_"+str(uuid.uuid4()) + '.webm'
-            new_filepath = config["video_crop"]["path"] + new_filename
-            # ffmpeg -noautorotate -i test.webm -vf scale=-1:384,crop=384:384:0:0
-            # crop=384:384:(in_w-384)/2:0 -strict -2 -preset ultrafast -metadata:s:v rotate=0 -fflags +genpts out1.webm
+                new_filename = "video_"+str(uuid.uuid4()) + '.webm'
+                new_filepath = config["video_crop"]["path"] + new_filename
 
-            result = run(args=[
+                result = run(args=[
                         config["app"]['ffmpeg_executable'],
                         "-noautorotate",
                         "-i",
@@ -191,60 +185,17 @@ def save_data():
                         stdout=PIPE,
                         stderr=PIPE,
                         universal_newlines=True)
-            logging.info("{0} {1} {2}".format(result.returncode,result.stdout, result.stderr))
+                logging.info("{0} {1} {2}".format(result.returncode,result.stdout, result.stderr))
 
-            # subprocess.call(
-            #     args=[
-            #         config["app"]['ffmpeg_executable'],
-            #         "-noautorotate",
-            #         "-i",
-            #         tmp_filename,
-            #         "-vf",
-            #         "scale=-1:{1},crop=crop={0}:{1}:(in_w-{0})/2:0".format(config["video_crop"]["dimensions"]["width"],config["video_crop"]["dimensions"]["height"]),
-            #         "-strict",
-            #         "-2",
-            #         "-preset",
-            #         "ultrafast",
-            #         "-metadata:s:v",
-            #         "rotate=0",
-            #         "-fflags",
-            #         "+genpts",
-            #         new_filepath],
-            #     stdout=subprocess.PIPE,
-            #     stderr=subprocess.STDOUT,
-            #     stdin=subprocess.DEVNULL)
-
-
-            # time.sleep(30)
-
-            try:
-                os.remove(tmp_filename)
+                try:
+                    os.remove(tmp_filename)
+                except Exception as e:
+                    logging.error('Error in removing tmp video file:' + str(e))
+                    logging.info('image file ' + new_filename + ' processed successfully')
             except Exception as e:
-                logging.error('Error in removing ffmpeg file:' + str(e))
+                logging.error('problem in video processing: ' + str(e))
 
-        # clip = VideoFileClip(filename)
-        # w, h = clip.size
-
-        # q_dim = min(w, h);
-
-        # waist_coord = math.ceil((max(w, h) - q_dim) / 2)
-
-        # if w == max(w, h):
-        # 	crop_clip = crop(clip, x1=waist_coord, width=q_dim)
-        # else:
-        # 	crop_clip = crop(clip, y1=waist_coord, width=q_dim)
-        # clip_res = resize(crop_clip, (
-        #	config["video_crop"]["dimensions"]["width"], config["video_crop"]["dimensions"]["height"]))
-
-        # new_filename = str(uuid.uuid4()) + '.webm'
-        # new_filepath = config["video_crop"]["path"] + new_filename
-        # clip_res.write_videofile(new_filepath)
-
-        # write_file_info(new_filename, request.json['datatype'])
-
-        # clip.close()
-        # crop_clip.close()
-        # clip_res.close()
+        write_file_info(new_filename, request.json['datatype'])
         return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
     except Exception as e:
         logging.error('Error in saving data:' + str(e))
