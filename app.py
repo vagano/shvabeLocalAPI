@@ -76,24 +76,6 @@ def verify_token(token):
     return False
 
 
-@app.route('/')
-def root():
-    test = request.args.get("test")
-    if test is not None:
-        return app.send_static_file('index_test.html')
-    else:
-        return app.send_static_file('index.html')
-
-@app.route('/photo/<path:path>')
-def send_photo(path):
-    return send_from_directory('photo', path)
-
-
-@app.route('/video/<path:path>')
-def send_video(path):
-    return send_from_directory('video', path)
-
-
 @app.route('/api/get_current_temp', methods=['GET'])
 # @auth.login_required
 def get_temp():
