@@ -1,5 +1,4 @@
 from subprocess import PIPE, run
-import time
 
 import sqlite3
 
@@ -12,8 +11,6 @@ import uuid
 
 from flask_cors import CORS
 from flask_httpauth import HTTPTokenAuth
-
-import math
 
 import logging
 
