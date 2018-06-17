@@ -14,3 +14,13 @@ Pillow==5.1.0
 six==1.11.0
 tqdm==4.23.4
 Werkzeug==0.14.1
+
+
+<div id="cycle">
+    <div id="temp_widget" class="widget" lifetime="30"></div>
+    <div id="en_logo" class="widget" lifetime="10"></div>
+    <div id="clock_widget" class="widget" lifetime="30"></div>
+    <div id="ru_logo" class="widget" lifetime="10"></div>
+    <div id="analog_clock_widget" class="widget" lifetime="30"></div>
+    <div id="shield" class="widget" lifetime="10"></div>
+</div>
